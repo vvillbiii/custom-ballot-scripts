@@ -2,16 +2,34 @@
 pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Snapshot.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 
-contract MyToken is ERC20, AccessControl, ERC20Permit, ERC20Votes {
+contract TeamGToken is
+    ERC20,
+    ERC20Snapshot,
+    AccessControl,
+    ERC20Permit,
+    ERC20Votes
+{
+    bytes32 public constant SNAPSHOT_ROLE = keccak256("SNAPSHOT_ROLE");
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
-    constructor() ERC20("MyToken", "MTK") ERC20Permit("MyToken") {
+    constructor() ERC20("TeamG", "G01") ERC20Permit("TeamG") {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(SNAPSHOT_ROLE, msg.sender);
+        _mint(msg.sender, 1000 * 10**decimals());
         _grantRole(MINTER_ROLE, msg.sender);
+    }
+
+    function getSnapshotID() external view returns (uint256 sid) {
+        sid = _getCurrentSnapshotId();
+    }
+
+    function snapshot() public onlyRole(SNAPSHOT_ROLE) {
+        _snapshot();
     }
 
     function mint(address to, uint256 amount) public onlyRole(MINTER_ROLE) {
@@ -19,6 +37,14 @@ contract MyToken is ERC20, AccessControl, ERC20Permit, ERC20Votes {
     }
 
     // The following functions are overrides required by Solidity.
+
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 amount
+    ) internal override(ERC20, ERC20Snapshot) {
+        super._beforeTokenTransfer(from, to, amount);
+    }
 
     function _afterTokenTransfer(
         address from,

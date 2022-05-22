@@ -4,7 +4,7 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { ethers } from "hardhat";
 // eslint-disable-next-line node/no-missing-import
 import { CustomBallot } from "../typechain/CustomBallot";
-import { MyToken } from "../typechain/MyToken";
+import { TeamGToken } from "../typechain/TeamGToken";
 
 const PROPOSALS = ["Proposal 1", "Proposal 2", "Proposal 3"];
 const BASE_VOTE_POWER = 10;
@@ -24,14 +24,14 @@ describe("Ballot", function () {
   let ballotContract: CustomBallot;
   let ballotFactory: any;
   let tokenContractFactory: any;
-  let tokenContract: MyToken;
+  let tokenContract: TeamGToken;
   let accounts: SignerWithAddress[];
 
   beforeEach(async () => {
     accounts = await ethers.getSigners();
     [ballotFactory, tokenContractFactory] = await Promise.all([
       ethers.getContractFactory("CustomBallot"),
-      ethers.getContractFactory("MyToken"),
+      ethers.getContractFactory("TeamGToken"),
     ]);
     tokenContract = await tokenContractFactory.deploy();
     await tokenContract.deployed();

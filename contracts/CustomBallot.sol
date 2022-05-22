@@ -2,7 +2,7 @@
 pragma solidity >=0.7.0 <0.9.0;
 
 interface IERC20Votes {
-    function getPastVotes(address, uint256) external returns (uint256);
+    function getPastVotes(address, uint256) external view returns (uint256);
 }
 
 contract CustomBallot {
@@ -57,8 +57,8 @@ contract CustomBallot {
         winnerName_ = proposals[winningProposal()].name;
     }
 
-    function votingPower() public returns (uint256 votingPower_) {
-        votingPower_ =
+    function votingPower() public view returns (uint256 _votingPower) {
+        _votingPower =
             voteToken.getPastVotes(msg.sender, referenceBlock) -
             spentVotePower[msg.sender];
     }

@@ -1,7 +1,6 @@
 import { ethers } from "ethers";
 import "dotenv/config";
-import * as customBallotJson from "../artifacts/contracts/CustomBallot.sol/CustomBallot.json";
-import * as tokenJson from "../artifacts/contracts/Token.sol/MyToken.json";
+import * as customBallotJson from "../../artifacts/contracts/CustomBallot.sol/CustomBallot.json";
 
 // This key is already public on Herong's Tutorial Examples - v1.03, by Dr. Herong Yang
 // Do never expose your keys like this
@@ -32,22 +31,9 @@ async function main() {
   if (balance < 0.01) {
     throw new Error("Not enough ether");
   }
-
-  /***** START Token Contract Deployment ******/
-  console.log("Deploying Token contract");
-
-  const tokenFactory = new ethers.ContractFactory(
-    tokenJson.abi,
-    tokenJson.bytecode,
-    signer
-  );
-
-  const tokenContract = await tokenFactory.deploy();
-  console.log("Awaiting confirmations");
-  await tokenContract.deployed();
-
-  console.log(`Token Contract deployed at ${tokenContract.address}`);
-  /***** END Token Contract Deployment ******/
+  if (process.argv.length < 3) throw new Error("token address missing");
+  const tokenAddress = process.argv[2];
+  console.log({ tokenAddress });
 
   /***** START CustomBallot Deployment ******/
   console.log("Deploying CustomBallot contract");
@@ -59,11 +45,12 @@ async function main() {
   );
   const customBallotContract = await customBallotFactory.deploy(
     convertStringArrayToBytes32(PROPOSALS),
-    tokenContract.address
+    tokenAddress
   );
   console.log("Awaiting confirmations");
   await customBallotContract.deployed();
   console.log(`CustomBallot deployed at ${customBallotContract.address}`);
+
   /***** END Custom Ballot Deployment ******/
 
   console.log("Completed");
