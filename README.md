@@ -1,4 +1,4 @@
-# Weekend project
+# Encode Weekend Project 2 - Team G
 
 - Form groups of 3 to 5 students
 - Complete the contracts together
