@@ -5,6 +5,8 @@ interface IERC20Votes {
     function getPastVotes(address, uint256) external view returns (uint256);
 }
 
+/// @title Weekend 2 Project
+/// @author Team G
 contract CustomBallot {
     event Voted(
         address indexed voter,
